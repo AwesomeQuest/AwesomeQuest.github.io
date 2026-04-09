@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Examples · SimpleBLE</title><meta name="title" content="Examples · SimpleBLE"/><meta property="og:title" content="Examples · SimpleBLE"/><meta property="twitter:title" content="Examples · SimpleBLE"/><meta name="description" content="Documentation for SimpleBLE."/><meta property="og:description" content="Documentation for SimpleBLE."/><meta property="twitter:description" content="Documentation for SimpleBLE."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">SimpleBLE</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">SimpleBLE.jl</a></li><li><a class="tocitem" href="../Adapters/">Adapters</a></li><li><a class="tocitem" href="../Peripherals/">Peripherals</a></li><li class="is-active"><a class="tocitem" href>Examples</a><ul class="internal"><li><a class="tocitem" href="#Connect"><span>Connect</span></a></li><li><a class="tocitem" href="#Indicate-/-notify"><span>Indicate / notify</span></a></li><li><a class="tocitem" href="#List-adapters"><span>List adapters</span></a></li><li><a class="tocitem" href="#List-paired"><span>List paired</span></a></li><li><a class="tocitem" href="#Multiconnect"><span>Multiconnect</span></a></li><li><a class="tocitem" href="#Notify-multi"><span>Notify multi</span></a></li><li><a class="tocitem" href="#Power-cycle"><span>Power cycle</span></a></li><li><a class="tocitem" href="#Read"><span>Read</span></a></li><li><a class="tocitem" href="#Scan"><span>Scan</span></a></li><li><a class="tocitem" href="#Write"><span>Write</span></a></li></ul></li><li><a class="tocitem" href="../misc/">Internal functions</a></li><li><a class="tocitem" href="../types/">Types</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Examples</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Examples</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/AwesomeQuest/SimpleBLE.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/AwesomeQuest/SimpleBLE.jl/blob/main/docs/src/examples.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Examples"><a class="docs-heading-anchor" href="#Examples">Examples</a><a id="Examples-1"></a><a class="docs-heading-anchor-permalink" href="#Examples" title="Permalink"></a></h1><p>The following examples are recreations from <a href="https://github.com/simpleble/simpleble/tree/4eb5efcb30f0b531bbb458ecee67e798e496346f/examples/simpleble/src">here</a></p><h2 id="Connect"><a class="docs-heading-anchor" href="#Connect">Connect</a><a id="Connect-1"></a><a class="docs-heading-anchor-permalink" href="#Connect" title="Permalink"></a></h2><pre><code class="language-julia hljs">adapter = get_adapter(0)
+peripherals = Peripheral[]
+set_callback_on_scan_found(adapter) do peri
+	println(&quot;Found device: &quot;, identifier(peri), &quot;[&quot;,address(peri),&quot;]&quot;)
+	if is_connectable(peri)
+		push!(peripherals, peri)
+	end
+end
+set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
+set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
+scan_for(5000)
+
+println(&quot;The following connectable devices were found&quot;)
+for (i,p) in enumerate(peripherals)
+	println(&quot;[$i] &quot;, identifier(p), &quot; [$(address(p))]&quot;)
+end
+
+print(&quot;Please select a device to connect to&quot;)
+selection = parse(Int, readline())
+selection in eachindex(peripherals) || exit(1)
+
+peri = peripherals[selection]
+println(&quot;Connecting to &quot;, identifier(peri), &quot; [&quot;,address(peri),&quot;]&quot;)
+connect(peri) do 
+	println(&quot;Successfully connected.&quot;)
+	println(&quot;MTU: &quot;, mtu(peri))
+	for S in services(peri)
+		println(&quot;Service: &quot;, S.uuid)
+		for C in S.characteristics
+			println(&quot;\tCharacteristic: &quot;, C.uuid)
+			print(&quot;\t\tCapabilities: &quot;)
+			print(&quot; can_read: $(C.can_read)&quot;)
+			print(&quot; can_write_request: $(C.can_write_request)&quot;)
+			print(&quot; can_write_command: $(C.can_write_command)&quot;)
+			print(&quot; can_notify: $(C.can_notify)&quot;)
+			print(&quot; can_indicate: $(C.can_indicate)&quot;)
+			println()
+			for D in C.descriptors
+				println(&quot;\t\t\tDescriptor: &quot;, D.uuid)
+			end
+		end
+	end
+end</code></pre><h2 id="Indicate-/-notify"><a class="docs-heading-anchor" href="#Indicate-/-notify">Indicate / notify</a><a id="Indicate-/-notify-1"></a><a class="docs-heading-anchor-permalink" href="#Indicate-/-notify" title="Permalink"></a></h2><pre><code class="language-julia hljs">adapter = get_adapter(0)
+peripherals = Peripheral[]
+set_callback_on_scan_found(adapter) do peri
+	println(&quot;Found device: &quot;, identifier(peri), &quot;[&quot;,address(peri),&quot;]&quot;)
+	if is_connectable(peri)
+		push!(peripherals, peri)
+	end
+end
+set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
+set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
+scan_for(5000)
+
+println(&quot;The following connectable devices were found&quot;)
+for (i,p) in enumerate(peripherals)
+	println(&quot;[$i] &quot;, identifier(p), &quot; [$(address(p))]&quot;)
+end
+
+print(&quot;Please select a device to connect to&quot;)
+selection = parse(Int, readline())
+selection in eachindex(peripherals) || exit(1)
+
+peri = peripherals[selection]
+println(&quot;Connecting to &quot;, identifier(peri), &quot; [&quot;,address(peri),&quot;]&quot;)
+connect(peri) do 
+	println(&quot;Successfully connected.&quot;)
+
+	uuids = Tuple{SBLEUUID, SBLEUUID}[]
+	for S in services(peri)
+		for C in S.characteristics
+			C.can_indicate || continue
+			push!(uuids, (S.uuid, C.uuid))
+		end
+	end
+
+	for (i, (S,C)) in enumerate(uuids)
+		println(&quot;[$i] $S $C&quot;)
+	end
+
+	print(&quot;Please select a characteristic to indicate&quot;)
+	selection = parse(Int, readline())
+	selection in eachindex(uuids) || error(&quot;Incorrect selection&quot;)
+
+    # This could also be notify
+	indicate(peri, uuids[selection]...) do data
+		println(&quot;Received: &quot;, data)
+	end
+	sleep(5)
+
+	unsubscribe(peri, uuids[selection]...)
+end</code></pre><h2 id="List-adapters"><a class="docs-heading-anchor" href="#List-adapters">List adapters</a><a id="List-adapters-1"></a><a class="docs-heading-anchor-permalink" href="#List-adapters" title="Permalink"></a></h2><pre><code class="language-julia hljs">println(&quot;Using SimpleBLE version&quot;, SimpleBLE.simpleble_get_version())
+println(&quot;Bluetooth enabled: &quot;, SimpleBLE.is_bluetooth_enabled())
+
+for A in get_adapters()
+	println(&quot;Adapter: &quot;, identifier(A), &quot; [&quot;, address(A),&quot;]&quot;)
+end</code></pre><h2 id="List-paired"><a class="docs-heading-anchor" href="#List-paired">List paired</a><a id="List-paired-1"></a><a class="docs-heading-anchor-permalink" href="#List-paired" title="Permalink"></a></h2><pre><code class="language-julia hljs">println(&quot;Using SimpleBLE version&quot;, SimpleBLE.simpleble_get_version())
+println(&quot;Bluetooth enabled: &quot;, SimpleBLE.is_bluetooth_enabled())
+
+for A in get_adapters()
+	println(&quot;Adapter: &quot;, identifier(A), &quot; [&quot;, address(A),&quot;]&quot;)
+	for P in get_paired_peripherals(A)
+		println(&quot;\tPeripheral: &quot;, identifier(P), &quot; [&quot;, address(P),&quot;]&quot;)
+	end
+end</code></pre><h2 id="Multiconnect"><a class="docs-heading-anchor" href="#Multiconnect">Multiconnect</a><a id="Multiconnect-1"></a><a class="docs-heading-anchor-permalink" href="#Multiconnect" title="Permalink"></a></h2><pre><code class="language-julia hljs">
+adapter = get_adapter(0)
+peripherals = Peripheral[]
+set_callback_on_scan_found(adapter) do peri
+	println(&quot;Found device: &quot;, identifier(peri), &quot;[&quot;,address(peri),&quot;]&quot;)
+	if is_connectable(peri)
+		push!(peripherals, peri)
+	end
+end
+set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
+set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
+scan_for(5000)
+
+println(&quot;The following connectable devices were found&quot;)
+for (i,p) in enumerate(peripherals)
+	println(&quot;[$i] &quot;, identifier(p), &quot; [$(address(p))]&quot;)
+end
+
+print(&quot;Please select a device to connect to&quot;)
+selection = parse(Int, readline())
+selection in eachindex(peripherals) || exit(1)
+
+peri = peripherals[selection]
+println(&quot;Connecting to &quot;, identifier(peri), &quot; [&quot;,address(peri),&quot;]&quot;)
+
+for i in 1:5
+	!connect(peri) || error(&quot;Failed at $i to connect&quot;)
+	println(&quot;Successfully connected.&quot;)
+	sleep(2)
+	!disconnect(peri) || error(&quot;Failed at $i to disconnect&quot;)
+	println(&quot;Successfully disconnected.&quot;)
+end</code></pre><h2 id="Notify-multi"><a class="docs-heading-anchor" href="#Notify-multi">Notify multi</a><a id="Notify-multi-1"></a><a class="docs-heading-anchor-permalink" href="#Notify-multi" title="Permalink"></a></h2><pre><code class="language-julia hljs">
+mutable struct AtomicBool
+	@atomic val::Bool
+end
+print_allowed = AtomicBool(false)
+
+adapter = get_adapter(0)
+peripherals = Peripheral[]
+set_callback_on_scan_found(adapter) do peri
+	println(&quot;Found device: &quot;, identifier(peri), &quot;[&quot;,address(peri),&quot;]&quot;)
+	if is_connectable(peri)
+		push!(peripherals, peri)
+	end
+end
+set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
+set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
+
+connected_peris = Peripheral[]
+
+for i in 1:2
+	empty!(peripherals)
+	scan_for(5000)
+
+	println(&quot;The following connectable devices were found&quot;)
+	for (i,p) in enumerate(peripherals)
+		println(&quot;[$i] &quot;, identifier(p), &quot; [$(address(p))]&quot;)
+	end
+
+	print(&quot;Please select a device to connect to&quot;)
+	selection = parse(Int, readline())
+	selection in eachindex(peripherals) || exit(1)
+
+	peri = peripherals[selection]
+	println(&quot;Connecting to &quot;, identifier(peri), &quot; [&quot;,address(peri),&quot;]&quot;)
+	connect(peri) || error(&quot;Failed to connect&quot;)
+	push!(connected_peris, peri)
+
+	uuids = Tuple{SBLEUUID, SBLEUUID}[]
+	for S in services(peri)
+		for C in S.characteristics
+			C.can_indicate || continue
+			push!(uuids, (S.uuid, C.uuid))
+		end
+	end
+
+	for (i, (S,C)) in enumerate(uuids)
+		println(&quot;[$i] $S $C&quot;)
+	end
+
+	print(&quot;Please select a characteristic to indicate&quot;)
+	selection = parse(Int, readline())
+	selection in eachindex(uuids) || error(&quot;Incorrect selection&quot;)
+
+	notify(peri, uuids[selection]...) do data
+		if @atomic print_allowed.val
+			println(&quot;Peripheral &quot;, identifier(peri), &quot; received: &quot;, data)
+		end
+	end
+end
+
+@atomic print_allowed.val = true
+
+sleep(5)
+
+disconnect(connected_peris[2])
+
+sleep(3)
+
+disconnect(connected_peris[1])</code></pre><h2 id="Power-cycle"><a class="docs-heading-anchor" href="#Power-cycle">Power cycle</a><a id="Power-cycle-1"></a><a class="docs-heading-anchor-permalink" href="#Power-cycle" title="Permalink"></a></h2><pre><code class="language-julia hljs">println(&quot;Using SimpleBLE version&quot;, SimpleBLE.simpleble_get_version())
+println(&quot;Bluetooth enabled: &quot;, SimpleBLE.is_bluetooth_enabled())
+
+for A in get_adapters()
+	id = identifier(A)
+	adr = address(A)
+	println(&quot;Adapter: $id [$adr]&quot;)
+	set_callback_on_power_on(A) do 
+		println(&quot;Adapter $id powered on&quot;)
+	end
+	set_callback_on_power_off(A) do 
+		println(&quot;Adapter $id powered off&quot;)
+	end
+
+	println(&quot;Adapter powered: &quot;, is_powered(A))
+	power_off(A)
+	println(&quot;Adapter powered: &quot;, is_powered(A))
+
+	sleep(5)
+
+	println(&quot;Adapter powered: &quot;, is_powered(A))
+	power_on(A)
+	println(&quot;Adapter powered: &quot;, is_powered(A))
+end</code></pre><h2 id="Read"><a class="docs-heading-anchor" href="#Read">Read</a><a id="Read-1"></a><a class="docs-heading-anchor-permalink" href="#Read" title="Permalink"></a></h2><pre><code class="language-julia hljs">adapter = get_adapter(0)
+peripherals = Peripheral[]
+set_callback_on_scan_found(adapter) do peri
+	println(&quot;Found device: &quot;, identifier(peri), &quot;[&quot;,address(peri),&quot;]&quot;)
+	if is_connectable(peri)
+		push!(peripherals, peri)
+	end
+end
+set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
+set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
+scan_for(5000)
+
+println(&quot;The following connectable devices were found&quot;)
+for (i,p) in enumerate(peripherals)
+	println(&quot;[$i] &quot;, identifier(p), &quot; [$(address(p))]&quot;)
+end
+
+print(&quot;Please select a device to connect to&quot;)
+selection = parse(Int, readline())
+selection in eachindex(peripherals) || exit(1)
+
+peri = peripherals[selection]
+println(&quot;Connecting to &quot;, identifier(peri), &quot; [&quot;,address(peri),&quot;]&quot;)
+connect(peri) do 
+	println(&quot;Successfully connected.&quot;)
+
+	uuids = Tuple{SBLEUUID, SBLEUUID}[]
+	for S in services(peri)
+		for C in S.characteristics
+			C.can_indicate || continue
+			push!(uuids, (S.uuid, C.uuid))
+		end
+	end
+
+	for (i, (S,C)) in enumerate(uuids)
+		println(&quot;[$i] $S $C&quot;)
+	end
+
+	print(&quot;Please select a characteristic to read&quot;)
+	selection = parse(Int, readline())
+	selection in eachindex(uuids) || error(&quot;Incorrect selection&quot;)
+
+	for i in 1:5
+		rx_data = peripheral_read(peri, uuids[selection]...)
+		println(&quot;Characteristic content is: &quot;, rx_data)
+		sleep(1)
+	end
+end</code></pre><h2 id="Scan"><a class="docs-heading-anchor" href="#Scan">Scan</a><a id="Scan-1"></a><a class="docs-heading-anchor-permalink" href="#Scan" title="Permalink"></a></h2><pre><code class="language-julia hljs">
+adapter = get_adapter(0)
+peripherals = Peripheral[]
+set_callback_on_scan_found(adapter) do peri
+	println(&quot;Found device: &quot;, identifier(peri), &quot;[&quot;,address(peri),&quot;]&quot;,
+	peripheral_rssi(peri), &quot; dBm&quot;)
+end
+set_callback_on_scan_updated(adapter) do peri
+	println(&quot;Updated device: &quot;, identifier(peri), &quot;[&quot;,address(peri),&quot;]&quot;,
+	peripheral_rssi(peri), &quot; dBm&quot;)
+end
+set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
+set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
+scan_for(2000)
+
+println(&quot;Scan complete.&quot;)
+
+println(&quot;The following devices were found:&quot;)
+for P in scan_get_results(adapter)
+	connectable_string = is_connectable(P) ? &quot;Connectable&quot; : &quot;Non-Connectable&quot;
+	peripheral_string = identifier(P) * &quot; [&quot; * address(P) * &quot;] &quot; * string(rssi(P)) * &quot; dBm&quot;
+
+	println(peripheral_string, &quot; &quot;, connectable_string)
+	println(&quot;\tTx Power: &quot;, tx_power(P), &quot; dBm&quot;)
+	println(&quot;\tAddress Type: &quot;, address_type(P))
+
+	for S in services(P)
+		println(&quot;\tService UUID: &quot;, S.uuid)
+		println(&quot;\tService data: &quot;, S.data)
+	end
+
+	for M in manufacturer_data(P)
+		println(&quot;\tManufacturer ID: &quot;, M.manufacturer_id)
+		println(&quot;\tManufacturer data: &quot;, M.data[1:M.data_length])
+	end
+end</code></pre><h2 id="Write"><a class="docs-heading-anchor" href="#Write">Write</a><a id="Write-1"></a><a class="docs-heading-anchor-permalink" href="#Write" title="Permalink"></a></h2><pre><code class="language-julia hljs">adapter = get_adapter(0)
+peripherals = Peripheral[]
+set_callback_on_scan_found(adapter) do peri
+	println(&quot;Found device: &quot;, identifier(peri), &quot;[&quot;,address(peri),&quot;]&quot;)
+	if is_connectable(peri)
+		push!(peripherals, peri)
+	end
+end
+set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
+set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
+scan_for(5000)
+
+println(&quot;The following connectable devices were found&quot;)
+for (i,p) in enumerate(peripherals)
+	println(&quot;[$i] &quot;, identifier(p), &quot; [$(address(p))]&quot;)
+end
+
+print(&quot;Please select a device to connect to&quot;)
+selection = parse(Int, readline())
+selection in eachindex(peripherals) || exit(1)
+
+peri = peripherals[selection]
+println(&quot;Connecting to &quot;, identifier(peri), &quot; [&quot;,address(peri),&quot;]&quot;)
+
+connect(peri) do 
+	println(&quot;Successfully connected.&quot;)
+
+	uuids = Tuple{SBLEUUID, SBLEUUID}[]
+	for S in services(peri)
+		for C in S.characteristics
+			C.can_indicate || continue
+			push!(uuids, (S.uuid, C.uuid))
+		end
+	end
+
+	for (i, (S,C)) in enumerate(uuids)
+		println(&quot;[$i] $S $C&quot;)
+	end
+
+	print(&quot;Please select a characteristic to write into&quot;)
+	selection = parse(Int, readline())
+	selection in eachindex(uuids) || error(&quot;Incorrect selection&quot;)
+
+	println(&quot;Please write the contents to be sent: &quot;)
+	contents = readline()
+	write_request(peri, uuids[selection]..., contents)
+end</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Peripherals/">« Peripherals</a><a class="docs-footer-nextpage" href="../misc/">Internal functions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 9 April 2026 20:49">Thursday 9 April 2026</span>. Using Julia version 1.12.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
