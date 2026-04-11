@@ -7,7 +7,7 @@ set_callback_on_scan_found(adapter) do peri
 end
 set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
 set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
-scan_for(5000)
+scan_for(adapter, 5000)
 
 println(&quot;The following connectable devices were found&quot;)
 for (i,p) in enumerate(peripherals)
@@ -25,16 +25,16 @@ connect(peri) do
 	println(&quot;MTU: &quot;, mtu(peri))
 	for S in services(peri)
 		println(&quot;Service: &quot;, S.uuid)
-		for C in S.characteristics
+		for C in S.characteristics[1:S.characteristic_count]
 			println(&quot;\tCharacteristic: &quot;, C.uuid)
-			print(&quot;\t\tCapabilities: &quot;)
-			print(&quot; can_read: $(C.can_read)&quot;)
-			print(&quot; can_write_request: $(C.can_write_request)&quot;)
-			print(&quot; can_write_command: $(C.can_write_command)&quot;)
-			print(&quot; can_notify: $(C.can_notify)&quot;)
-			print(&quot; can_indicate: $(C.can_indicate)&quot;)
+			print(&quot;\t\tCapabilities:&quot;)
+			println(&quot;\t\t\tcan_read: $(C.can_read)&quot;)
+			println(&quot;\t\t\tcan_write_request: $(C.can_write_request)&quot;)
+			println(&quot;\t\t\tcan_write_command: $(C.can_write_command)&quot;)
+			println(&quot;\t\t\tcan_notify: $(C.can_notify)&quot;)
+			println(&quot;\t\t\tcan_indicate: $(C.can_indicate)&quot;)
 			println()
-			for D in C.descriptors
+			for D in C.descriptors[1:C.descriptor_count]
 				println(&quot;\t\t\tDescriptor: &quot;, D.uuid)
 			end
 		end
@@ -47,7 +47,7 @@ set_callback_on_scan_found(adapter) do peri
 end
 set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
 set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
-scan_for(5000)
+scan_for(adapter, 5000)
 
 println(&quot;The following connectable devices were found&quot;)
 for (i,p) in enumerate(peripherals)
@@ -65,7 +65,7 @@ connect(peri) do
 
 	uuids = Tuple{SBLEUUID, SBLEUUID}[]
 	for S in services(peri)
-		for C in S.characteristics
+		for C in S.characteristics[1:S.characteristic_count]
 			C.can_indicate &amp;&amp; push!(uuids, (S.uuid, C.uuid))
 		end
 	end
@@ -74,7 +74,7 @@ connect(peri) do
 		println(&quot;[$i] $S $C&quot;)
 	end
 
-	print(&quot;Please select a characteristic to indicate&quot;)
+	print(&quot;Please select a characteristic to indicate: &quot;)
 	selection = parse(Int, readline())
 	selection in eachindex(uuids) || error(&quot;Incorrect selection&quot;)
 
@@ -85,7 +85,7 @@ connect(peri) do
 	sleep(5)
 
 	unsubscribe(peri, uuids[selection]...)
-end</code></pre><h2 id="List-adapters"><a class="docs-heading-anchor" href="#List-adapters">List adapters</a><a id="List-adapters-1"></a><a class="docs-heading-anchor-permalink" href="#List-adapters" title="Permalink"></a></h2><pre><code class="language-julia hljs">println(&quot;Using SimpleBLE version&quot;, SimpleBLE.simpleble_get_version())
+end</code></pre><h2 id="List-adapters"><a class="docs-heading-anchor" href="#List-adapters">List adapters</a><a id="List-adapters-1"></a><a class="docs-heading-anchor-permalink" href="#List-adapters" title="Permalink"></a></h2><pre><code class="language-julia hljs">println(&quot;Using SimpleBLE version: &quot;, SimpleBLE.simpleble_get_version())
 println(&quot;Bluetooth enabled: &quot;, SimpleBLE.is_bluetooth_enabled())
 
 for A in get_adapters()
@@ -98,8 +98,7 @@ for A in get_adapters()
 	for P in get_paired_peripherals(A)
 		println(&quot;\tPeripheral: &quot;, identifier(P), &quot; [&quot;, address(P),&quot;]&quot;)
 	end
-end</code></pre><h2 id="Multiconnect"><a class="docs-heading-anchor" href="#Multiconnect">Multiconnect</a><a id="Multiconnect-1"></a><a class="docs-heading-anchor-permalink" href="#Multiconnect" title="Permalink"></a></h2><pre><code class="language-julia hljs">
-adapter = get_adapter(0)
+end</code></pre><h2 id="Multiconnect"><a class="docs-heading-anchor" href="#Multiconnect">Multiconnect</a><a id="Multiconnect-1"></a><a class="docs-heading-anchor-permalink" href="#Multiconnect" title="Permalink"></a></h2><pre><code class="language-julia hljs">adapter = get_adapter(0)
 peripherals = Peripheral[]
 set_callback_on_scan_found(adapter) do peri
 	println(&quot;Found device: &quot;, identifier(peri), &quot; [&quot;,address(peri),&quot;]&quot;)
@@ -107,7 +106,7 @@ set_callback_on_scan_found(adapter) do peri
 end
 set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
 set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
-scan_for(5000)
+scan_for(adapter, 5000)
 
 println(&quot;The following connectable devices were found&quot;)
 for (i,p) in enumerate(peripherals)
@@ -122,10 +121,10 @@ peri = peripherals[selection]
 println(&quot;Connecting to &quot;, identifier(peri), &quot; [&quot;,address(peri),&quot;]&quot;)
 
 for i in 1:5
-	!connect(peri) || error(&quot;Failed at $i to connect&quot;)
+	connect(peri) || error(&quot;Failed at $i to connect&quot;)
 	println(&quot;Successfully connected.&quot;)
 	sleep(2)
-	!disconnect(peri) || error(&quot;Failed at $i to disconnect&quot;)
+	disconnect(peri) || error(&quot;Failed at $i to disconnect&quot;)
 	println(&quot;Successfully disconnected.&quot;)
 end</code></pre><h2 id="Notify-multi"><a class="docs-heading-anchor" href="#Notify-multi">Notify multi</a><a id="Notify-multi-1"></a><a class="docs-heading-anchor-permalink" href="#Notify-multi" title="Permalink"></a></h2><pre><code class="language-julia hljs">mutable struct AtomicBool
 	@atomic val::Bool
@@ -145,7 +144,7 @@ connected_peris = Peripheral[]
 
 for i in 1:2
 	empty!(peripherals)
-	scan_for(5000)
+	scan_for(adapter, 5000)
 
 	println(&quot;The following connectable devices were found&quot;)
 	for (i,p) in enumerate(peripherals)
@@ -163,8 +162,8 @@ for i in 1:2
 
 	uuids = Tuple{SBLEUUID, SBLEUUID}[]
 	for S in services(peri)
-		for C in S.characteristics
-			push!(uuids, (S.uuid, C.uuid))
+		for C in S.characteristics[1:S.characteristic_count]
+			C.can_notify &amp;&amp; push!(uuids, (S.uuid, C.uuid))
 		end
 	end
 
@@ -172,7 +171,7 @@ for i in 1:2
 		println(&quot;[$i] $S $C&quot;)
 	end
 
-	print(&quot;Please select a characteristic to indicate&quot;)
+	print(&quot;Please select a characteristic to indicate: &quot;)
 	selection = parse(Int, readline())
 	selection in eachindex(uuids) || error(&quot;Incorrect selection&quot;)
 
@@ -222,7 +221,7 @@ set_callback_on_scan_found(adapter) do peri
 end
 set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
 set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
-scan_for(5000)
+scan_for(adapter, 5000)
 
 println(&quot;The following connectable devices were found&quot;)
 for (i,p) in enumerate(peripherals)
@@ -240,8 +239,8 @@ connect(peri) do
 
 	uuids = Tuple{SBLEUUID, SBLEUUID}[]
 	for S in services(peri)
-		for C in S.characteristics
-			push!(uuids, (S.uuid, C.uuid))
+		for C in S.characteristics[1:S.characteristic_count]
+			C.can_read &amp;&amp; push!(uuids, (S.uuid, C.uuid))
 		end
 	end
 
@@ -249,7 +248,7 @@ connect(peri) do
 		println(&quot;[$i] $S $C&quot;)
 	end
 
-	print(&quot;Please select a characteristic to read&quot;)
+	print(&quot;Please select a characteristic to read: &quot;)
 	selection = parse(Int, readline())
 	selection in eachindex(uuids) || error(&quot;Incorrect selection&quot;)
 
@@ -271,7 +270,7 @@ set_callback_on_scan_updated(adapter) do peri
 end
 set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
 set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
-scan_for(2000)
+scan_for(adapter, 2000)
 
 println(&quot;Scan complete.&quot;)
 
@@ -286,7 +285,7 @@ for P in scan_get_results(adapter)
 
 	for S in services(P)
 		println(&quot;\tService UUID: &quot;, S.uuid)
-		println(&quot;\tService data: &quot;, S.data)
+		println(&quot;\tService data: &quot;, S.data[1:S.data_length])
 	end
 
 	for M in manufacturer_data(P)
@@ -301,7 +300,7 @@ set_callback_on_scan_found(adapter) do peri
 end
 set_callback_on_scan_start(()-&gt;println(&quot;Scan started&quot;), adapter)
 set_callback_on_scan_stop(()-&gt;println(&quot;Scan stopped&quot;), adapter)
-scan_for(5000)
+scan_for(adapter, 5000)
 
 println(&quot;The following connectable devices were found&quot;)
 for (i,p) in enumerate(peripherals)
@@ -320,8 +319,8 @@ connect(peri) do
 
 	uuids = Tuple{SBLEUUID, SBLEUUID}[]
 	for S in services(peri)
-		for C in S.characteristics
-			push!(uuids, (S.uuid, C.uuid))
+		for C in S.characteristics[1:S.characteristic_count]
+			C.can_write_request &amp;&amp; push!(uuids, (S.uuid, C.uuid))
 		end
 	end
 
@@ -329,11 +328,11 @@ connect(peri) do
 		println(&quot;[$i] $S $C&quot;)
 	end
 
-	print(&quot;Please select a characteristic to write into&quot;)
+	print(&quot;Please select a characteristic to write into: &quot;)
 	selection = parse(Int, readline())
 	selection in eachindex(uuids) || error(&quot;Incorrect selection&quot;)
 
 	println(&quot;Please write the contents to be sent: &quot;)
 	contents = readline()
 	write_request(peri, uuids[selection]..., contents)
-end</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Peripherals/">« Peripherals</a><a class="docs-footer-nextpage" href="../misc/">Internal functions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Friday 10 April 2026 03:22">Friday 10 April 2026</span>. Using Julia version 1.12.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Peripherals/">« Peripherals</a><a class="docs-footer-nextpage" href="../misc/">Internal functions »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Saturday 11 April 2026 16:38">Saturday 11 April 2026</span>. Using Julia version 1.12.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
